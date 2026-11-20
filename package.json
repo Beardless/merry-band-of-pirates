@@ -1,0 +1,27 @@
+{
+  "name": "merry-band-of-pirates",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Unofficial, non-commercial FTL-style fan roguelite set in the Expeditionary Force universe.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "sim": "vitest run tests/sim.test.ts",
+    "balance": "tsx scripts/balance.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "globals": "^17.14.0",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.73.0",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  }
+}
