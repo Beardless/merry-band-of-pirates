@@ -11,7 +11,12 @@ before the aliens learn that humans have a starship.
 > original fan work: no text from the books is reproduced, and all graphics are drawn
 > procedurally in code.
 
-## Run it
+## Play it
+
+**Live: https://beardless.github.io/merry-band-of-pirates/** (static site on GitHub Pages,
+deployed automatically from `main`; best on a laptop or desktop at 1280×720 or larger).
+
+## Run it locally
 
 Requires Node 20+.
 
@@ -27,7 +32,16 @@ npm run build      # outputs dist/
 npm run preview    # serve the built files locally
 ```
 
-`dist/` uses relative paths, so any static file host can serve it from any sub-path.
+Production builds use the GitHub Pages base path `/merry-band-of-pirates/` (see
+`vite.config.ts`); `npm run dev` serves from `/` as usual. To host the build somewhere else,
+override the base: `BASE_PATH=./ npm run build` produces relative asset paths that work from
+any folder.
+
+## Deployment
+
+`.github/workflows/deploy.yml` runs on every push to `main`: `npm ci`, lint, tests, build,
+then publishes `dist/` with `actions/configure-pages`, `actions/upload-pages-artifact` and
+`actions/deploy-pages`. Pages is configured with **GitHub Actions** as its source.
 
 ## Test and check
 

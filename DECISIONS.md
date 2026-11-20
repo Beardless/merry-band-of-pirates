@@ -147,9 +147,39 @@ The brief said "you decide everything". This file records each choice and the re
 
 ## Repo and deploy
 
-- The repo is a **private** GitHub repository under the authenticated account.
-- **No public deploy.** GitHub Pages for private repositories needs a paid plan, and this
-  account's plan doesn't report one. No other static-host CLI (Netlify, Vercel, Cloudflare,
-  Surge) is installed or authenticated. Keeping the fan game private also avoids publishing
-  someone else's IP. To play: clone, then `npm install && npm run dev`, or `npm run build`
-  and serve `dist/` with any static server.
+- **Originally private, now public.** The repo first went up as a private repository with no
+  deploy: GitHub Pages on a private repo needs a paid plan, and no other host was set up.
+  Bartłomiej later asked for the game to be public, so the repo was switched to public and
+  deployed to GitHub Pages: https://beardless.github.io/merry-band-of-pirates/
+- **Pre-publication audit.** Before the visibility change:
+  - Every tracked file and the whole history (one commit at that point) were scanned for
+    secrets: token prefixes, private keys, `.env`/credential files, `settings.local`.
+    Nothing was found. The only pattern hit was the word "password" in a line of Skippy
+    dialogue.
+  - Tracked files were checked for personal data such as local filesystem paths or email
+    addresses. None were found.
+  - The commit author email was compared (without printing it) to the email on the
+    account's public GitHub profile. They match, so making history public exposes nothing
+    new. That matters because history could not be rewritten anyway: force-push and rebase
+    were ruled out.
+- **Base path.** Production builds use `base: '/merry-band-of-pirates/'`, because a Pages
+  project site lives under the repo-name sub-path. Dev (`vite` serve) keeps `/`, so local
+  development doesn't change. A `BASE_PATH` env var overrides the build base (for example
+  `./`), so the build can be hosted elsewhere. Earlier builds used `./` everywhere; an
+  explicit absolute base is the conventional, unambiguous choice for Pages.
+  `@types/node` was added because `vite.config.ts` now reads `process.env` and is
+  type-checked by `npm run build`.
+- **Workflow** (`.github/workflows/deploy.yml`):
+  - Runs on pushes to `main` and on manual dispatch.
+  - The build job runs `npm ci`, lint, tests and build before uploading `dist/`, so a broken
+    commit never reaches the live site.
+  - The deploy job uses `actions/deploy-pages` in the `github-pages` environment, with the
+    minimal permissions `contents: read`, `pages: write` and `id-token: write`.
+  - Concurrency group `pages`, without cancelling an in-flight deploy.
+  - Action versions are pinned to the current major releases at setup time: checkout v7,
+    setup-node v7, configure-pages v6, upload-pages-artifact v5, deploy-pages v5.
+  - Node 22, matching local development.
+- **Pages source = GitHub Actions** (`build_type: workflow`), set through the REST API, so no
+  `gh-pages` branch is needed.
+- **Disclaimer.** The fan-project disclaimer stays on the title screen and at the top of the
+  README. The repo description also says the project is unofficial and non-commercial.
